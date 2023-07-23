@@ -27,6 +27,8 @@ public class Bullet : MonoBehaviour
     private void Awake()
     {
         RidBody = GetComponent<Rigidbody2D>();
+        RidBody.isKinematic = false;
+        RidBody.gravityScale = 0;
     }
 
     void FixedUpdate()
@@ -39,12 +41,21 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        
-    }
+        if(collision.gameObject.tag == "Ground")
+        {
+            if(collision.contactCount > 0)
+            {
+                Vector2 newDirection = direction;
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        Direction = -Direction;
+                Vector2 hitPoint = collision.GetContact(0).normal;
+                if (hitPoint.x != 0)
+                    newDirection.x *= -1;
+                if (hitPoint.y != 0)
+                    newDirection.y *= -1;
+
+                Direction = newDirection;
+            }
+        }
     }
 
 }
