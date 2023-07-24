@@ -14,7 +14,6 @@ public class Bullet : MonoBehaviour
         set
         {
             direction = value.normalized;
-
             transform.up = direction;
         }
     }
@@ -41,20 +40,37 @@ public class Bullet : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Ground")
+        string tag = collision.gameObject.tag;
+        if(tag == "Ground")
         {
             if(collision.contactCount > 0)
             {
                 Vector2 newDirection = direction;
 
                 Vector2 hitPoint = collision.GetContact(0).normal;
-                if (hitPoint.x != 0)
+                if(hitPoint.x != 0.0f)
+                {
                     newDirection.x *= -1;
-                if (hitPoint.y != 0)
+                    
+                }
+                else if(hitPoint.y != 0.0f)
+                {
                     newDirection.y *= -1;
+                }
 
                 Direction = newDirection;
             }
+        }
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        string tag = collision.gameObject.tag;
+        if (tag == "Enemy")
+        {
+            Raider raider = collision.gameObject.GetComponent<Raider>();
+            raider.SetState(RaiderState.DEAD);
         }
     }
 
